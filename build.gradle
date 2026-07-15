@@ -1,0 +1,76 @@
+plugins {
+    id "java-library"
+    id "maven-publish"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withSourcesJar()
+}
+
+sourceSets {
+    smoke {
+        java.srcDir "src/smoke/java"
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+}
+
+tasks.register("smokeTest", JavaExec) {
+    dependsOn tasks.named("smokeClasses")
+    classpath = sourceSets.smoke.runtimeClasspath
+    mainClass = "vn.pgame.sdk.PGameSdkSmokeTest"
+}
+
+tasks.register("verifyNativeResources") {
+    inputs.files(
+            "src/main/resources/META-INF/native/windows-x86_64/PGameSDK.dll",
+            "src/main/resources/META-INF/native/windows-x86_64/PGameSDKJNI.dll")
+    doLast {
+        inputs.files.each { file ->
+            if (!file.isFile() || file.length() == 0) {
+                throw new GradleException("Missing native artifact: ${file}")
+            }
+        }
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn tasks.named("verifyNativeResources")
+}
+
+tasks.named("check") {
+    dependsOn tasks.named("smokeTest")
+}
+
+tasks.named("sourcesJar") {
+    exclude "META-INF/native/**"
+}
+
+jar {
+    archiveBaseName = "pgame-sdk-windows"
+    manifest {
+        attributes(
+                "Implementation-Title": "PGame SDK for Windows Java",
+                "Implementation-Version": project.version)
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifactId = "pgame-sdk-java"
+            pom {
+                name = "PGame SDK for Windows Java"
+                description = "PGame Web OAuth SDK for Java games on Windows x64"
+                url = "https://github.com/dhpl/pgame-sdk-java"
+            }
+        }
+    }
+}
