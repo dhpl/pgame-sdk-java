@@ -8,7 +8,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 
 final class NativeLibraryLoader {
-    private static final String VERSION = "0.1.0";
+    private static final String VERSION = "1.3.7";
     private static final String RESOURCE_ROOT =
             "/META-INF/native/windows-x86_64/";
     private static boolean loaded;
@@ -31,7 +31,6 @@ final class NativeLibraryLoader {
             Path core = extract(directory, "PGameSDK.dll");
             Path jni = extract(directory, "PGameSDKJNI.dll");
 
-            // Load the core first so the Windows loader can resolve the JNI DLL dependency.
             System.load(core.toAbsolutePath().toString());
             System.load(jni.toAbsolutePath().toString());
             loaded = true;
