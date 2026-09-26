@@ -8,7 +8,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 
 final class NativeLibraryLoader {
-    private static final String VERSION = "1.3.7";
+    private static final String VERSION = "1.3.11";
     private static final String RESOURCE_ROOT =
             "/META-INF/native/windows-x86_64/";
     private static boolean loaded;

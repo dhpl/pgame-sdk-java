@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.github.dhpl:pgame-sdk-java:1.3.7"
+    implementation "com.github.dhpl:pgame-sdk-java:1.3.11"
 }
 ```
 
